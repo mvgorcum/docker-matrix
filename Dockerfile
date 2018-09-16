@@ -66,6 +66,7 @@ RUN set -ex \
         pwgen \
         sqlite \
         zlib1g \
+        libjemalloc1 \
     ; \
     python3 -m pip install --upgrade wheel ;\
     python3 -m pip install --upgrade python-ldap ;\
@@ -83,3 +84,5 @@ RUN set -ex \
     apt-get autoremove -y $buildDeps ; \
     apt-get autoremove -y ;\
     rm -rf /var/lib/apt/* /var/cache/apt/*
+    
+    ENV LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libjemalloc.so.1"
