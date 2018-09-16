@@ -75,9 +75,10 @@ RUN set -ex \
         python-pip \
         python-psycopg2 \
         python-virtualenv \
-	python-jinja2 \
+        python-jinja2 \
         sqlite \
         zlib1g \
+        libjemalloc1 \
     ; \
     python -m pip install --upgrade pip ;\
     python -m pip install --upgrade wheel ;\
@@ -97,3 +98,5 @@ RUN set -ex \
     apt-get autoremove -y $buildDeps ; \
     apt-get autoremove -y ;\
     rm -rf /var/lib/apt/* /var/cache/apt/*
+    
+ENV LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libjemalloc.so.1"
