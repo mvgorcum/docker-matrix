@@ -81,7 +81,12 @@ case $OPTION in
 		)
 
 		echo "-=> start matrix"
-        	exec python3 -m synapse.app.homeserver --config-path /data/homeserver.yaml & /usr/bin/turnserver -c /data/turnserver.conf
+            groupadd -r -g $MATRIX_GID matrix
+            useradd -r -d /data -M -u $MATRIX_UID -g matrix matrix
+            chown -R $MATRIX_UID:$MATRIX_GID /data
+            chown -R $MATRIX_UID:$MATRIX_GID /uploads
+            chmod a+rwx /run
+            su matrix -c "python3 -m synapse.app.homeserver --config-path /data/homeserver.yaml" & su matrix -c "/usr/bin/turnserver -c /data/turnserver.conf"
 		;;
 
 	"autostart")
@@ -95,7 +100,12 @@ case $OPTION in
                 fi
             )
             echo "-=> start matrix"
-	    exec python3 -m synapse.app.homeserver --config-path /data/homeserver.yaml & /usr/bin/turnserver -c /data/turnserver.conf
+            groupadd -r -g $MATRIX_GID matrix
+            useradd -r -d /data -M -u $MATRIX_UID -g matrix matrix
+            chown -R $MATRIX_UID:$MATRIX_GID /data
+            chown -R $MATRIX_UID:$MATRIX_GID /uploads
+            chmod a+rwx /run
+            su matrix -c "python3 -m synapse.app.homeserver --config-path /data/homeserver.yaml" & su matrix -c "/usr/bin/turnserver -c /data/turnserver.conf"
         else
             breakup="0"
             [[ -z "${SERVER_NAME}" ]] && echo "STOP! environment variable SERVER_NAME must be set" && breakup="1"
