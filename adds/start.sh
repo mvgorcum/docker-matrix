@@ -24,7 +24,7 @@ generate_turn_key() {
 generate_synapse_file() {
 	local filepath="${1}"
 
-	python synapse.app.homeserver \
+	python -m synapse.app.homeserver \
 	       --config-path "${filepath}" \
 	       --generate-config \
 	       --report-stats ${REPORT_STATS} \
