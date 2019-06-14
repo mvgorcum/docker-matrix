@@ -15,7 +15,7 @@ VOLUME ["/data"]
 # Git branch to build from
 ARG BV_SYN=master
 ARG BV_TUR=master
-ARG TAG_SYN=v1.0.0rc1
+ARG TAG_SYN=v1.0.0
 
 # user configuration
 ENV MATRIX_UID=991 MATRIX_GID=991
@@ -65,6 +65,7 @@ RUN set -ex \
         libxslt1.1 \
         pwgen \
         sqlite \
+	libjemalloc1 \
         zlib1g \
     ; \
     pip install --upgrade wheel ;\
@@ -73,8 +74,7 @@ RUN set -ex \
     pip install --upgrade lxml \
     ; \
     git clone --branch $BV_SYN --depth 1 https://github.com/matrix-org/synapse.git \
-    && cd /synapse \
-    && git checkout tags/$TAG_SYN \
+    && cd synapse \
     && pip install --upgrade .[all] \
     && GIT_SYN=$(git ls-remote https://github.com/matrix-org/synapse $BV_SYN | cut -f 1) \
     && echo "synapse: $BV_SYN ($GIT_SYN)" >> /synapse.version \
@@ -83,7 +83,6 @@ RUN set -ex \
     ; \
     groupadd -r -g $MATRIX_GID matrix \
     && useradd -r -d /data -M -u $MATRIX_UID -g matrix matrix \
-    && chown $MATRIX_UID:$MATRIX_GID /data/* \
     && chown -R $MATRIX_UID:$MATRIX_GID /data \
     && chown -R $MATRIX_UID:$MATRIX_GID /uploads \
     ; \
@@ -91,4 +90,6 @@ RUN set -ex \
     apt-get autoremove -y ;\
     rm -rf /var/lib/apt/* /var/cache/apt/* \
     && chmod 777 /run
+
 USER matrix
+ENV LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libjemalloc.so.1"
