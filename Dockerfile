@@ -13,9 +13,8 @@ EXPOSE 8448
 VOLUME ["/data"]
 
 # Git branch to build from
-ARG BV_SYN=release-v1.4.0
+ARG BV_SYN=develop
 ARG BV_TUR=master
-ARG TAG_SYN=v1.4.0
 
 # user configuration
 ENV MATRIX_UID=991 MATRIX_GID=991
@@ -75,7 +74,6 @@ RUN set -ex \
     pip3 install --upgrade wheel ;\
     pip3 install --upgrade psycopg2;\
     pip3 install --upgrade python-ldap ;\
-    pip3 install git+https://github.com/t2bot/synapse-simple-antispam#egg=synapse-simple-antispam ;\
     pip3 install --upgrade lxml \
     ; \
     groupadd -r -g $MATRIX_GID matrix \
@@ -84,7 +82,7 @@ RUN set -ex \
     && chown -R $MATRIX_UID:$MATRIX_GID /uploads \
     && git clone --branch $BV_SYN --depth 1 https://github.com/matrix-org/synapse.git \
     && cd /synapse \
-    && git checkout -b tags/$TAG_SYN \
+    && git checkout develop \
     && pip3 install --upgrade .[all] \
     && GIT_SYN=$(git ls-remote https://github.com/matrix-org/synapse $BV_SYN | cut -f 1) \
     && echo "synapse: $BV_SYN ($GIT_SYN)" >> /synapse.version \
